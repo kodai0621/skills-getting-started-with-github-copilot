@@ -77,6 +77,8 @@ async def get_pull_requests():
     repo = "skills-getting-started-with-github-copilot"
     
     # GitHub API endpoint
+    # Note: Using unauthenticated requests (60/hour rate limit)
+    # For production, add authentication with a GitHub token for higher rate limits
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
     params = {
         "state": "open",
@@ -84,7 +86,7 @@ async def get_pull_requests():
         "direction": "desc"
     }
     
-    try:
+    try {
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params, timeout=10.0)
             response.raise_for_status()
@@ -105,6 +107,6 @@ async def get_pull_requests():
                 })
             
             return {"pull_requests": formatted_pulls}
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch pull requests: {str(e)}")
+    except httpx.HTTPError:
+        raise HTTPException(status_code=500, detail="Failed to fetch pull requests from GitHub")
 

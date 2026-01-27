@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const activities = await response.json();
 
       // Clear loading message
