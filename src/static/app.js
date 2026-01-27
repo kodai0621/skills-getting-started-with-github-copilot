@@ -46,6 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchPullRequests() {
     try {
       const response = await fetch("/pull-requests");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
 
       // Clear loading message

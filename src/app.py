@@ -71,7 +71,8 @@ def signup_for_activity(activity_name: str, email: str):
 @app.get("/pull-requests")
 async def get_pull_requests():
     """Get the latest open pull requests for this repository"""
-    # Repository details
+    # Repository details - hardcoded for this specific demo application
+    # In production, these should be environment variables
     owner = "kodai0621"
     repo = "skills-getting-started-with-github-copilot"
     
