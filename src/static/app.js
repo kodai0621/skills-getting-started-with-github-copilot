@@ -3,11 +3,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const pullRequestsList = document.getElementById("pull-requests-list");
 
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const activities = await response.json();
 
       // Clear loading message
@@ -38,6 +44,47 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
+    }
+  }
+
+  // Function to fetch pull requests from API
+  async function fetchPullRequests() {
+    try {
+      const response = await fetch("/pull-requests");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+
+      // Clear loading message
+      pullRequestsList.innerHTML = "";
+
+      if (data.pull_requests.length === 0) {
+        pullRequestsList.innerHTML = "<p>No open pull requests found.</p>";
+        return;
+      }
+
+      // Populate pull requests list
+      data.pull_requests.forEach((pr) => {
+        const prCard = document.createElement("div");
+        prCard.className = "activity-card";
+
+        const createdDate = new Date(pr.created_at).toLocaleDateString();
+
+        prCard.innerHTML = `
+          <h4><a href="${pr.html_url}" target="_blank">PR #${pr.number}: ${pr.title}</a></h4>
+          <p><strong>Author:</strong> ${pr.author}</p>
+          <p><strong>Created:</strong> ${createdDate}</p>
+          <p><strong>Status:</strong> ${pr.state}</p>
+        `;
+
+        pullRequestsList.appendChild(prCard);
+      });
+    } catch (error) {
+      pullRequestsList.innerHTML = "<p>Failed to load pull requests. Please try again later.</p>";
+      console.error("Error fetching pull requests:", error);
     }
   }
 
@@ -83,4 +130,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   fetchActivities();
+  fetchPullRequests();
 });
