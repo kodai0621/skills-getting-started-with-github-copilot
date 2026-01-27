@@ -86,7 +86,7 @@ async def get_pull_requests():
         "direction": "desc"
     }
     
-    try {
+    try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params, timeout=10.0)
             response.raise_for_status()
